@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Лобби</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script>
+        let searchInterval;
+        let gameId;
+
+        function searchGame() {
+            document.getElementById('message').innerText = 'Поиск игры...';
+
+            function sendSearchRequest() {
+                fetch("{% url 'lobby' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    }
+                }).then(response => response.json()).then(data => {
+                    if (data.status === 'ok') {
+                        clearInterval(searchInterval);
+                        window.location.href = data.redirect_url;
+                    } else if (data.status === 'waiting') {
+                        gameId = data.game_id;
+                        searchInterval = setInterval(checkGameStatus, 1000);
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            sendSearchRequest();
+        }
+
+        function checkGameStatus() {
+            fetch(`/game/${gameId}/state/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'IN_PROGRESS') {
+                    clearInterval(searchInterval);
+                    window.location.href = `/game/${gameId}/`;
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        window.onbeforeunload = function () {
+            clearInterval(searchInterval);
+            fetch("{% url 'leave_lobby' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="base-container">
+            <h1>Лобби</h1>
+            <button onclick="searchGame()">Искать игру</button>
+            <div id="message"></div>
+            <a href="{% url 'home' %}">Выйти из лобби</a>
+        </div>
+
+        <div class="leaderboard-container">
+            <h1>Таблица лидеров</h1>
+            <table class="leader">
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Победы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in leaderboard_data %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.wins }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

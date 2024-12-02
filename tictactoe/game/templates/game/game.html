@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Игра</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchGameState();
+        });
+
+        const gameId = {{ game.id }};
+        let isGameFinished = false;
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+        let lastMessageTimestamp = null;
+
+        function makeMove(move) {
+            fetch(`/game/${gameId}/move/`, {
+                method: "POST",
+                body: JSON.stringify({ "move": move }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'ok') {
+                    fetchGameState();
+                }
+            }).catch(error => console.error('Error making move:', error));
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const content = input.value;
+            fetch(`/game/${gameId}/send_message/`, {
+                method: 'POST',
+                body: new URLSearchParams({ 'content': content }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    input.value = '';
+                    fetchMessages();
+                }
+            });
+        }
+
+        function fetchMessages() {
+            const url = new URL(`/game/${gameId}/get_messages/`, window.location.origin);
+            if (lastMessageTimestamp) {
+                url.searchParams.append('since_timestamp', lastMessageTimestamp);
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const chatBox = document.getElementById('chat-box');
+                    console.log("Fetched messages:", data); // Отладка
+                    data.forEach(msg => {
+                        if (!document.getElementById(`message-${msg.id}`)) {
+                            const messageElement = document.createElement('div');
+                            messageElement.className = 'chat-message';
+                            messageElement.id = `message-${msg.id}`;
+
+                            if (msg.type === 'text') {
+                                messageElement.innerHTML = `<strong>${msg.sender}</strong>: ${msg.content}`;
+                            } else if (msg.type === 'voice') {
+                                console.log('Adding voice message URL:', msg.audio_file_url); // Отладка
+                                const audioElement = document.createElement('audio');
+                                audioElement.controls = true;
+                                audioElement.src = msg.audio_file_url;
+                                messageElement.innerHTML = `<strong>${msg.sender}</strong>: `;
+                                messageElement.appendChild(audioElement);
+                            }
+                            chatBox.appendChild(messageElement);
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
+
+                        lastMessageTimestamp = msg.timestamp;
+                    });
+                })
+                .catch(error => console.error('Error fetching messages:', error));
+        }
+
+        function fetchGameState() {
+            if (isGameFinished) return;
+            fetch(`/game/${gameId}/state/`)
+                .then(response => response.json())
+                .then(data => {
+                    const board = data.board.split('');
+                    for (let i = 0; i < 9; i++) {
+                        document.getElementById(`cell-${i}`).innerText = board[i] === ' ' ? '' : board[i];
+                    }
+                    if (data.status === 'WAITING') {
+                        document.getElementById('status').innerText = 'Ожидание другого игрока...';
+                    } else {
+                        document.getElementById('status').innerText = `Сейчас ход: ${data.turn}`;
+                    }
+                    if (data.status === 'FINISHED' && data.winner) {
+                        document.getElementById('winner').innerText = `${data.winner} выиграл!`;
+                        isGameFinished = true;
+                        showLobbyOption();
+                    } else if (board.every(cell => cell !== ' ')) {
+                        document.getElementById('winner').innerText = 'Ничья!';
+                        isGameFinished = true;
+                        showLobbyOption();
+                    }
+                })
+                .catch(error => console.error('Error fetching game state:', error));
+        }
+
+        function showLobbyOption() {
+            const restartDiv = document.getElementById('restart-options');
+            restartDiv.style.display = 'block';
+            restartDiv.innerHTML = `
+                <button onclick="leaveGame()">Выйти в лобби</button>
+            `;
+        }
+
+        function leaveGame() {
+            fetch(`/game/${gameId}/leave/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'closed') {
+                    window.location.href = '{% url "lobby" %}';
+                }
+            }).catch(error => console.error('Error leaving game:', error));
+        }
+
+        function startRecording() {
+            audioChunks = []; // Очистка audioChunks при старте записи
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    isRecording = true;
+                    document.getElementById('recording-status').textContent = "Запись...";
+                    document.getElementById('record-button').textContent = "Остановить запись голоса";
+
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const formData = new FormData();
+                        formData.append('audio_file', audioBlob, 'voice_message.wav');
+                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                        fetch(`/game/${gameId}/upload_voice_message/`, {
+                            method: 'POST',
+                            body: formData,
+                        }).then(response => {
+                            if (response.ok) {
+                                fetchMessages();
+                            }
+                        }).catch(error => console.error('Error sending voice message:', error));
+                    });
+                }).catch(error => {
+                    console.error('Error accessing microphone:', error);
+                });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('recording-status').textContent = "";
+                document.getElementById('record-button').textContent = "Начать запись голоса";
+            }
+        }
+
+        function sendVoiceMessage() {
+            const input = document.getElementById('voice-input');
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('audio_file', file);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch(`/game/${gameId}/upload_voice_message/`, {
+                method: 'POST',
+                body: formData,
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.status === 'ok') {
+                      input.value = '';
+                      fetchMessages();
+                  }
+              }).catch(error => console.error('Error sending voice message:', error));
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+
+        setInterval(fetchGameState, 1000);
+        setInterval(fetchMessages, 1000);
+
+        window.addEventListener('beforeunload', function() {
+            if (!isGameFinished)
+                leaveGame();
+        });
+
+        fetchMessages();
+
+        document.title = 'Игра №' + gameId;
+    </script>
+</head>
+<body>
+    <h1>Игра: {{ game.player1.username }} vs {{ game.player2.username }}</h1>
+    <div class="container">
+        <div class="game-container">
+            <table>
+                <tr>
+                    <td id="cell-0" onclick="makeMove(0)">{{ game.board|slice:0|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-1" onclick="makeMove(1)">{{ game.board|slice:1|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-2" onclick="makeMove(2)">{{ game.board|slice:2|stringformat:"s"|capfirst }}</td>
+                </tr>
+                <tr>
+                    <td id="cell-3" onclick="makeMove(3)">{{ game.board|slice:3|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-4" onclick="makeMove(4)">{{ game.board|slice:4|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-5" onclick="makeMove(5)">{{ game.board|slice:5|stringformat:"s"|capfirst }}</td>
+                </tr>
+                <tr>
+                    <td id="cell-6" onclick="makeMove(6)">{{ game.board|slice:6|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-7" onclick="makeMove(7)">{{ game.board|slice:7|stringformat:"s"|capfirst }}</td>
+                    <td id="cell-8" onclick="makeMove(8)">{{ game.board|slice:8|stringformat:"s"|capfirst }}</td>
+                </tr>
+            </table>
+            <div id="status">
+                {% if game.turn %}
+                    Сейчас ходит {{ game.turn.username }}
+                {% else %}
+                    Никто не ходит
+                {% endif %}
+            </div>
+            <div id="winner"></div>
+            <div id="restart-options" style="display:none;"></div>
+            <div id="new-game" style="display:none;">
+                <a href="{% url 'lobby' %}">Вернуться в лобби</a>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <h2>Чат с оппонентом</h2>
+            <div id="chat-box">
+                <!-- Сообщения будут добавлены сюда через JavaScript -->
+            </div>
+            <form id="chat-form" onsubmit="sendMessage(event)">
+                <input type="text" id="chat-input" placeholder="Введите сообщение..." required>
+                <button type="submit">Отправить сообщение</button>
+            </form>
+            <div id="voice-message-container">
+                <button id="record-button" onclick="toggleRecording()">Начать запись голоса</button>
+                <span id="recording-status"></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
