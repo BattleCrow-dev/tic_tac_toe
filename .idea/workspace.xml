@@ -5,75 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76c28247-bb14-4b6e-9901-d4aec26622b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tictactoe/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/db.sqlite3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/erd.dot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/migrations/0002_game_status.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/migrations/0003_message.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/migrations/0004_voicemessage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/templates/game/game.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/templates/game/home.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/templates/game/lobby.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/templates/game/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/templates/game/signup.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/game/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/manage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_0wPr7Un.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_16UoGbg.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_2RrixAT.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_2o0Cw2X.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_3AR1gRN.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_4Q1s3Dt.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_6fnoZfP.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_6jSGsLp.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_BXX2M1F.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_CGiEpzf.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_D11gSBo.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_EiWiWUf.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_MToaMp8.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_PAE6LGi.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_QCbA8ew.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_QOQI9je.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_RHtJaTE.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_VZhGxfP.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_VhnOR7c.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_Y0fLLQQ.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_Y54UsIl.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_YNqzzyi.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_YgDvvWe.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_ZjBG3gf.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_bJ6u88W.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_d0f1Yez.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_eUd0A4i.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_fHCXt9i.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_g0TDOUY.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_g24RETX.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_ge3TG1i.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_kVjinmQ.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_n45hzd8.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_px6FNBl.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_ttnbnuA.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_wFSAPP6.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_wTJBwiN.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/static/css/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/static/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/tictactoe/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/tictactoe/asgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/tictactoe/settings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/tictactoe/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tictactoe/tictactoe/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tictactoe/media/voice_messages/voice_message_jzZdV1o.wav" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tictactoe/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/tictactoe/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +51,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/pashk/Desktop/Учебка/Бэкенд/Курсовая/tic_tac_toe/tictactoe/static&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/pashk/Desktop/Учебка/Бэкенд/Курсовая/tic_tac_toe&quot;
   }
 }</component>
   <component name="RecentsManager">
